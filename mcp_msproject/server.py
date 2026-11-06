@@ -270,14 +270,57 @@ def _error(message: str) -> list[types.TextContent]:
 
 
 def main() -> None:
+    import argparse
     import asyncio
+
+    parser = argparse.ArgumentParser(description="MCP server for Microsoft Project XML files")
+    parser.add_argument(
+        "--transport",
+        choices=["stdio", "sse"],
+        default="stdio",
+        help="Transport to use (default: stdio)",
+    )
+    parser.add_argument("--host", default="127.0.0.1", help="Host for SSE server (default: 127.0.0.1)")
+    parser.add_argument("--port", type=int, default=8000, help="Port for SSE server (default: 8000)")
+    args = parser.parse_args()
+
+    if args.transport == "sse":
+        _run_sse(args.host, args.port)
+    else:
+        asyncio.run(_run_stdio())
+
+
+async def _run_stdio() -> None:
     from mcp.server.stdio import stdio_server
 
-    async def _run():
-        async with stdio_server() as (read_stream, write_stream):
+    async with stdio_server() as (read_stream, write_stream):
+        await app.run(read_stream, write_stream, app.create_initialization_options())
+
+
+def _run_sse(host: str, port: int) -> None:
+    import uvicorn
+    from mcp.server.sse import SseServerTransport
+    from starlette.applications import Starlette
+    from starlette.routing import Mount, Route
+
+    sse = SseServerTransport("/messages/")
+
+    async def handle_sse(request):
+        async with sse.connect_sse(request.scope, request.receive, request._send) as (
+            read_stream,
+            write_stream,
+        ):
             await app.run(read_stream, write_stream, app.create_initialization_options())
 
-    asyncio.run(_run())
+    starlette_app = Starlette(
+        routes=[
+            Route("/sse", endpoint=handle_sse),
+            Mount("/messages/", app=sse.handle_post_message),
+        ]
+    )
+
+    print(f"MCP msproject SSE server running on http://{host}:{port}/sse")
+    uvicorn.run(starlette_app, host=host, port=port)
 
 
 if __name__ == "__main__":

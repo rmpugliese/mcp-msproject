@@ -8,6 +8,12 @@ dependencies = [
     "lxml>=5.0.0",
 ]
 
+[project.optional-dependencies]
+sse = [
+    "uvicorn>=0.30.0",
+    "starlette>=0.40.0",
+]
+
 [project.scripts]
 mcp-msproject = "mcp_msproject.server:main"
 

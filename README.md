@@ -33,6 +33,14 @@ cd mcp-msproject
 pip install -e .
 ```
 
+## Installation with SSE support
+
+To use the HTTP/SSE transport (for clients that do not launch local processes):
+
+```bash
+pip install "mcp-msproject[sse]"
+```
+
 ## Claude Desktop configuration
 
 Add this to your `claude_desktop_config.json`
@@ -51,6 +59,25 @@ Add this to your `claude_desktop_config.json`
 ```
 
 Then restart Claude Desktop.
+
+### SSE transport (HTTP — for other MCP clients)
+
+Start the server in SSE mode:
+
+```bash
+python3 -m mcp_msproject.server --transport sse --host 127.0.0.1 --port 8000
+```
+
+The server exposes two endpoints:
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /sse` | SSE event stream (client connects here) |
+| `POST /messages/` | Client sends messages here |
+
+Configure your MCP client to connect to `http://127.0.0.1:8000/sse`.
+
+> **Note:** SSE transport requires the optional dependencies: `pip install "mcp-msproject[sse]"`
 
 ## MS Project workflow
 
