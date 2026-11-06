@@ -28,7 +28,7 @@ pip install mcp-msproject
 Or install from source:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/mcp-msproject.git
+git clone https://github.com/rmpugliese/mcp-msproject.git
 cd mcp-msproject
 pip install -e .
 ```
@@ -43,15 +43,33 @@ pip install "mcp-msproject[sse]"
 
 ## Claude Desktop configuration
 
-Add this to your `claude_desktop_config.json`
-(`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS,
-`%APPDATA%\Claude\claude_desktop_config.json` on Windows):
+Edit the `claude_desktop_config.json` file for your platform:
+
+| Platform | Path |
+|---|---|
+| macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
+
+**macOS / Linux:**
 
 ```json
 {
   "mcpServers": {
     "msproject": {
       "command": "python3",
+      "args": ["-m", "mcp_msproject.server"]
+    }
+  }
+}
+```
+
+**Windows:**
+
+```json
+{
+  "mcpServers": {
+    "msproject": {
+      "command": "python",
       "args": ["-m", "mcp_msproject.server"]
     }
   }
