@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.env
+*.xml~
+claude_desktop_config.json
+tools_dump.json
+verify_mcp_tools.py
+msproject_cli.py
+.claude/

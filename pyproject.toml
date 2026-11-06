@@ -1,0 +1,16 @@
+[project]
+name = "mcp-msproject"
+version = "0.1.0"
+description = "MCP server for reading and writing Microsoft Project XML files"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=1.0.0",
+    "lxml>=5.0.0",
+]
+
+[project.scripts]
+mcp-msproject = "mcp_msproject.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
